@@ -29,3 +29,13 @@ button {
     gap: 6px;
     padding: 6px;
 }
+
+#backspace {
+    font-size: 40px;
+    flex-grow: 1;
+}
+
+.lower {
+    display: flex;
+    gap: 18px;
+}

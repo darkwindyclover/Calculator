@@ -85,6 +85,14 @@ function buttonClick(btn) {
             n1 = n1*10+parseInt(btn);
         }
     }
+    else if (btn == 'Backspace') {
+        if (lastAction == 'n1') {
+            n1 = Math.floor(n1/10);
+        }
+        else if (lastAction == 'n2') {
+            n2 = Math.floor(n2/10);
+        }
+    }
     else if (btn == 'C') {
         clear();
     }
