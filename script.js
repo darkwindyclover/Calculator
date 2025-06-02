@@ -2,6 +2,8 @@ let n1 = 0;
 let n2 = '';
 let op = '';
 let lastAction = '';
+let decFlag = false;
+let decimalDepth = 0;
 
 let buttons = document.querySelector('.buttons');
 let display = document.querySelector('.display');
@@ -32,6 +34,11 @@ function operate(x, y, op) {
     }
 }
 
+function roundToDecimal(number, decimalPos) {
+    const mult = 10**decimalDepth;
+    return Math.floor(number*mult)/mult;
+}
+
 buttons.addEventListener('click', (e) => {
     if (e.target.tagName === 'BUTTON') {
         buttonClick(e.target.textContent);
@@ -59,6 +66,8 @@ function buttonClick(btn) {
             op = btn;
             lastAction = 'op';
         }
+        decFlag = false;
+        decimalDepth = 0;
     }
     else if (btn == '=') {
         if (lastAction == 'n2') {
@@ -72,12 +81,24 @@ function buttonClick(btn) {
         if ((lastAction == 'n1') || (lastAction == ''))
         {
             lastAction = 'n1';
-            n1 = n1*10+parseInt(btn);
+            if (decFlag == true) {
+                decimalDepth++;
+                n1 = n1+parseInt(btn)/(10**decimalDepth);                
+            }
+            else {     
+                n1 = n1*10+parseInt(btn);
+            }          
         }
         else if ((lastAction == 'n2') || (lastAction == 'op'))
         {
             lastAction = 'n2';
-            n2 = n2*10+parseInt(btn);
+            if (decFlag == true) {
+                decimalDepth++;
+                n2 = n2+parseInt(btn)/(10**decimalDepth);              
+            }
+            else {
+                n2 = n2*10+parseInt(btn);
+            }
         }
         else if (lastAction == '=') {
             clear();
@@ -87,17 +108,41 @@ function buttonClick(btn) {
     }
     else if (btn == 'Backspace') {
         if (lastAction == 'n1') {
-            n1 = Math.floor(n1/10);
+            if (decimalDepth != 0) {
+                decimalDepth--;
+                n1 = roundToDecimal(n1, decimalDepth);
+                console.log(n1);              
+            }
+            else {
+                n1 = Math.floor(n1/10);
+            }      
+            if (n1 === 0) {
+                decFlag=false;
+            }     
         }
         else if (lastAction == 'n2') {
-            n2 = Math.floor(n2/10);
+            if (decFlag == true) {
+                decimalDepth--;
+                n2 = roundToDecimal(n2, decimalDepth);
+            }
+            else {
+                n2 = Math.floor(n2/10);
+            }       
+            if (n2 === 0) {
+                decFlag=false;
+            }    
         }
+    }
+    else if (btn == '.') {
+        if ((lastAction == 'n1' || lastAction == 'n2') && (decFlag == false)) {
+            decFlag = true;
+        }     
     }
     else if (btn == 'C') {
         clear();
     }
     render();
-    console.log(`n1: ${n1}, n2: ${n2}, op: ${op}, lastAction: ${lastAction}`);
+    console.log(`n1: ${n1}, n2: ${n2}, op: ${op}, lastAction: ${lastAction}, depth: ${decimalDepth}, decFlag: ${decFlag}`);
 }
 
 
@@ -106,6 +151,8 @@ function clear() {
     n2 = '';
     op = '';
     lastAction = '';
+    decimalDepth = 0;
+    decFlag = false;
 }
 
 function render() {
