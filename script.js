@@ -45,6 +45,20 @@ buttons.addEventListener('click', (e) => {
     }
 });
 
+window.addEventListener('keydown', (e) => {
+    if (e.key == 'Enter') {
+        btn = '=';
+    }
+    else if (e.key == 'c') {
+        btn = 'C';
+    }
+    else {
+        btn = e.key;
+    }
+    console.log(e.key, btn);
+    buttonClick(btn);
+});
+
 function buttonClick(btn) {
     if (['+', '-', '*', '/'].includes(btn)) {
         if (lastAction == 'op')
